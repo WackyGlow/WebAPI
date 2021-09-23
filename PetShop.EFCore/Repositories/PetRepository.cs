@@ -10,7 +10,7 @@ namespace PetShop.EFCore.Repositories
     {
         private readonly PetShopDBContext _ctx;
 
-        PetRepository(PetShopDBContext ctx)
+        public PetRepository(PetShopDBContext ctx)
         {
             _ctx = ctx;
         }
@@ -27,29 +27,63 @@ namespace PetShop.EFCore.Repositories
                     Color = p.Color,
                     Price = p.Price,
                     SoldDate = p.SoldDate,
-                    PetType = p.PetType
-                }).ToList();
+                })
+                .ToList();
         }
 
         public Pet Create(Pet pet)
         {
-            var beforeSaveEntity = new PetEntity()
+            var beforeSaveEntity = _ctx.Add(new PetEntity()
+                {
+                    Name = pet.Name,
+                    BirthDate = pet.BirthDate,
+                    Color = pet.Color,
+                    Price = pet.Price
+
+                })
+                .Entity;
+            _ctx.SaveChanges();
+            return new Pet()
             {
-                Name = pet.Name,
-                BirthDate = pet.BirthDate,
-                Color = pet.Color,
-                
+                Id = beforeSaveEntity.Id,
+                Name = beforeSaveEntity.Name,
+                BirthDate = beforeSaveEntity.BirthDate,
+                Color = beforeSaveEntity.Color,
+                Price = beforeSaveEntity.Price,
+                SoldDate = beforeSaveEntity.SoldDate,
             };
+
         }
 
         public string Delete(int petId)
         {
-            throw new System.NotImplementedException();
+            _ctx.Remove(new PetEntity() {Id = petId});
+            _ctx.SaveChanges();
+            return "Deleted?";
         }
 
         public Pet UpdatePet(Pet pet)
         {
-            throw new System.NotImplementedException();
+            var Entity = new PetEntity()
+            {
+                Id = pet.Id,
+                Name = pet.Name,
+                BirthDate = pet.BirthDate,
+                Color = pet.Color,
+                Price = pet.Price
+
+            };
+            var PetEntity = _ctx.Update(Entity).Entity;
+            _ctx.SaveChanges();
+            return new Pet()
+            {
+                Id = PetEntity.Id,
+                Name = PetEntity.Name,
+                BirthDate = PetEntity.BirthDate,
+                Color = PetEntity.Color,
+                Price = PetEntity.Price,
+                SoldDate = PetEntity.SoldDate,
+            };
         }
     }
 }

@@ -31,7 +31,7 @@ namespace PetShop.WebAPI.Controllers
         //api/Pet/7
         public ActionResult<Pet> GetById(long id)
         {
-            return StatusCode(501, "Vi er ikke klar endnu, ring igen senere bums");
+            return StatusCode(500, "Vi er ikke klar endnu, ring igen senere bums");
         }
 
         [HttpPost]
