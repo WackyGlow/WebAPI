@@ -73,23 +73,27 @@ namespace PetShop.EFCore.Repositories
         {
             var Entity = new PetEntity()
             {
-                Id = pet.Id,
                 Name = pet.Name,
                 BirthDate = pet.BirthDate,
                 Color = pet.Color,
-                Price = pet.Price
+                SoldDate = pet.SoldDate,
+                Price = pet.Price,
+                PetTypeId = pet.Type.Id,
+                InsuranceId = pet.Insurance.Id
 
             };
             var PetEntity = _ctx.Update(Entity).Entity;
             _ctx.SaveChanges();
             return new Pet()
             {
-                Id = PetEntity.Id,
-                Name = PetEntity.Name,
-                BirthDate = PetEntity.BirthDate,
-                Color = PetEntity.Color,
-                Price = PetEntity.Price,
-                SoldDate = PetEntity.SoldDate,
+                Id = Entity.Id,
+                Name = Entity.Name,
+                BirthDate = Entity.BirthDate,
+                Color = Entity.Color,
+                Price = Entity.Price,
+                SoldDate = Entity.SoldDate,
+                Type = new PetType(){Id = Entity.PetTypeId},
+                Insurance = new Insurance(){Id = Entity.InsuranceId}
             };
         }
     }
