@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PetShop.Core.IServices;
 using PetShop.Core.Models;
+using PetShop.WebAPI.DTO.Pets;
 
 namespace PetShop.WebAPI.Controllers
 {
@@ -21,9 +22,20 @@ namespace PetShop.WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Pet>> getAllPets()
+        public ActionResult<List<GetAllPetsDTO>> getAllPets()
         {
-            return Ok(_petService.GetAllPets());
+            return Ok(_petService.GetAllPets()
+                .Select(p => new GetAllPetsDTO()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    PetTypeName = p.Type.Name,
+                    BirthDate = p.BirthDate,
+                    SoldDate = p.SoldDate,
+                    Color = p.Color,
+                    Price = p.Price,
+                    InsuranceName = p.Insurance.Name
+                }));
         }
 
         [HttpGet("{id}")]

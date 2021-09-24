@@ -27,6 +27,8 @@ namespace PetShop.EFCore.Repositories
                     Color = p.Color,
                     Price = p.Price,
                     SoldDate = p.SoldDate,
+                    Type = new PetType(){Id = p.PetType.Id,Name = p.PetType.Name},
+                    Insurance = new Insurance(){Id = p.InsuranceId,Name = p.Insurance.Name,Price = p.Insurance.Price}
                 })
                 .ToList();
         }
@@ -38,7 +40,10 @@ namespace PetShop.EFCore.Repositories
                     Name = pet.Name,
                     BirthDate = pet.BirthDate,
                     Color = pet.Color,
-                    Price = pet.Price
+                    SoldDate = pet.SoldDate,
+                    Price = pet.Price,
+                    PetTypeId = pet.Type.Id,
+                    InsuranceId = pet.Insurance.Id
 
                 })
                 .Entity;
@@ -51,6 +56,8 @@ namespace PetShop.EFCore.Repositories
                 Color = beforeSaveEntity.Color,
                 Price = beforeSaveEntity.Price,
                 SoldDate = beforeSaveEntity.SoldDate,
+                Type = new PetType(){Id = beforeSaveEntity.PetTypeId},
+                Insurance = new Insurance(){Id = beforeSaveEntity.InsuranceId}
             };
 
         }

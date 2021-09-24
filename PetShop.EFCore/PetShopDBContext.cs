@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using PetShop.EFCore.Entities;
 
 namespace PetShop.EFCore
@@ -22,7 +23,7 @@ namespace PetShop.EFCore
                 .HasOne(pe => pe.PetType)
                 .WithMany(t => t.petsFromType);
             
-            //Insurance
+            //Insurance Seeding
             modelBuilder.Entity<InsuranceEntity>()
                 .HasData(new InsuranceEntity() {Id = 1, Name = "AlphaInsurance", Price = 22});
             modelBuilder.Entity<InsuranceEntity>()
@@ -30,13 +31,21 @@ namespace PetShop.EFCore
             modelBuilder.Entity<InsuranceEntity>()
                 .HasData(new InsuranceEntity() {Id = 3, Name = "GammaInsurance", Price = 2222});
             
-            //PetType
+            //PetType Seeding
             modelBuilder.Entity<PetTypeEntity>()
                 .HasData(new PetTypeEntity() {Id = 1, Name = "Hund"});
             modelBuilder.Entity<PetTypeEntity>()
                 .HasData(new PetTypeEntity() {Id = 2, Name = "Kat"});
             modelBuilder.Entity<PetTypeEntity>()
                 .HasData(new PetTypeEntity() {Id = 3, Name = "Fisk"});
+            
+            //Pet Seeding
+            modelBuilder.Entity<PetEntity>()
+                .HasData(new PetEntity()
+                {
+                    Id = 1, Name = "Basse", BirthDate = DateTime.Today, Color = "Brown", InsuranceId = 1, PetTypeId = 1,
+                    Price = 2000, SoldDate = DateTime.Now
+                });
         }
     }
 }
