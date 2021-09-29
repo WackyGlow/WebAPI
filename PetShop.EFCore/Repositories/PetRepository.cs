@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using PetShop.Core.Filtering;
 using PetShop.Core.Models;
 using PetShop.Domain.IRepositories;
 using PetShop.EFCore.Entities;
@@ -16,9 +18,9 @@ namespace PetShop.EFCore.Repositories
         }
 
 
-        public List<Pet> GetAllPets()
-        {
-            return _ctx.Pet
+        public List<Pet> GetAllPets(Filter filter)
+        {   
+            var selectQuery = _ctx.Pet
                 .Select(p => new Pet()
                 {
                     Id = p.Id,
@@ -27,10 +29,46 @@ namespace PetShop.EFCore.Repositories
                     Color = p.Color,
                     Price = p.Price,
                     SoldDate = p.SoldDate,
-                    Type = new PetType(){Id = p.PetType.Id,Name = p.PetType.Name},
-                    Insurance = new Insurance(){Id = p.InsuranceId,Name = p.Insurance.Name,Price = p.Insurance.Price}
-                })
-                .ToList();
+                    Type = new PetType() {Id = p.PetType.Id, Name = p.PetType.Name},
+                    Insurance = new Insurance() {Id = p.InsuranceId, Name = p.Insurance.Name, Price = p.Insurance.Price}
+                });
+
+            
+            
+            if (filter.OrderDir.ToLower().Equals("asc"))
+            {
+                switch (filter.OrderBy.ToLower())
+                {
+                    case "name":
+                        selectQuery = selectQuery.OrderBy(p => p.Name);
+                        break;
+                    case "id":
+                        selectQuery = selectQuery.OrderBy(p => p.Id);
+                        break;
+                    
+                }
+            }
+            else
+            {
+                switch (filter.OrderBy.ToLower())
+                {
+                    case "name":
+                        selectQuery = selectQuery.OrderByDescending(p => p.Name);
+                        break;
+                    case "id":
+                        selectQuery = selectQuery.OrderByDescending(p => p.Id);
+                        break;
+                }
+            }
+            
+            var searchQuery = selectQuery.Where(p => p.Name.ToLower().StartsWith(filter.Search.ToLower()));
+            
+            var query = searchQuery
+                .Skip((filter.Page- 1) * filter.Limit)
+                .Take(filter.Limit);
+
+
+            return query.ToList();
         }
 
         public Pet Create(Pet pet)
@@ -95,6 +133,11 @@ namespace PetShop.EFCore.Repositories
                 Type = new PetType(){Id = Entity.PetTypeId},
                 Insurance = new Insurance(){Id = Entity.InsuranceId}
             };
+        }
+
+        public int TotalCount()
+        {
+            return _ctx.Pet.Count();
         }
     }
 }

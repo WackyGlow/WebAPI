@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using PetShop.Core.Filtering;
 using PetShop.Core.IServices;
 using PetShop.Core.Models;
 using PetShop.Domain.IRepositories;
@@ -16,15 +17,28 @@ namespace PetShop.Domain.Services
             _repo = repo;
         }
 
-        public List<Pet> GetAllPets()
+        public List<Pet> GetAllPets(Filter filter)
         {
-            return _repo.GetAllPets();
+            if (filter.Limit <= 0 || filter.Limit > 100 || filter.Limit == null)
+            {
+                throw new ArgumentException("Filter limit must between 1 and 100");
+            }
+
+            var totalCount = TotalCount();
+            var maxCount = totalCount / filter.Limit;
+            
+            if (filter.Page < 1 || filter.Page > maxCount);
+            {
+                throw new ArgumentException($"Filter page must be above 0 and {maxCount}");
+            }
+            return _repo.GetAllPets(filter);
         }
 
         public List<Pet> GetPetsByType(string searchedWords)
         {
+            var filter = new Filter();
             List<Pet> searchedPets = new List<Pet>();
-            PetList = GetAllPets();
+            PetList = GetAllPets(filter);
             foreach (var pet in PetList)
             {
                 if (String.Equals(pet.Type.Name, searchedWords, StringComparison.CurrentCultureIgnoreCase))
@@ -48,6 +62,11 @@ namespace PetShop.Domain.Services
         public Pet UpdatePet(Pet pet)
         {
             return _repo.UpdatePet(pet);
+        }
+
+        public int TotalCount()
+        {
+            return _repo.TotalCount();
         }
     }
 }
