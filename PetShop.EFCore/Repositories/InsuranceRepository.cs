@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using PetShop.Core.Filtering;
 using PetShop.Core.Models;
 using PetShop.Domain.IRepositories;
 using PetShop.EFCore.Entities;
@@ -42,7 +43,7 @@ namespace PetShop.EFCore.Repositories
             };
         }
 
-        public List<Insurance> ReadAll()
+        public List<Insurance> ReadAll(Filter filter)
         {
             return _ctx.Insurance
                 .Select(insurance => new Insurance
@@ -78,6 +79,11 @@ namespace PetShop.EFCore.Repositories
                 Name = entity.Name,
                 Price = entity.Price
             };
+        }
+
+        public int TotalCount()
+        {
+            return _ctx.Insurance.Count();
         }
     }
 }

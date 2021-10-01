@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using PetShop.Core.Filtering;
 using PetShop.Core.IServices;
 using PetShop.Core.Models;
 using PetShop.Domain.IRepositories;
@@ -24,9 +26,21 @@ namespace PetShop.Domain.Services
             return _insuranceRepository.CreateInsurance(insurance);
         }
 
-        public List<Insurance> ReadAll()
+        public List<Insurance> ReadAll(Filter filter)
         {
-            return _insuranceRepository.ReadAll();
+            if (filter.Limit <= 0 || filter.Limit > 100 || filter.Limit == null)
+            {
+                throw new ArgumentException("Filter limit must between 1 and 100");
+            }
+
+            var totalCount = TotalCount();
+            var maxCount = totalCount / filter.Limit;
+            
+            if (filter.Page <= 0 || filter.Page > maxCount)
+            {
+                throw new ArgumentException($"Filter page must be above 0 and {maxCount}");
+            }
+            return _insuranceRepository.ReadAll(filter);
         }
 
         public string DeleteInsuranceById(int id)
@@ -37,6 +51,11 @@ namespace PetShop.Domain.Services
         public Insurance PutInsurance(Insurance insurance)
         {
             return _insuranceRepository.UpdateInsurance(insurance);
+        }
+
+        public int TotalCount()
+        {
+            return _insuranceRepository.TotalCount();
         }
     }
 }

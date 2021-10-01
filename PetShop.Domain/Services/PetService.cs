@@ -27,7 +27,7 @@ namespace PetShop.Domain.Services
             var totalCount = TotalCount();
             var maxCount = totalCount / filter.Limit;
             
-            if (filter.Page < 1 || filter.Page > maxCount);
+            if (filter.Page <= 0 || filter.Page > maxCount)
             {
                 throw new ArgumentException($"Filter page must be above 0 and {maxCount}");
             }

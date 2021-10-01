@@ -64,7 +64,7 @@ namespace PetShop.EFCore.Repositories
             var searchQuery = selectQuery.Where(p => p.Name.ToLower().StartsWith(filter.Search.ToLower()));
             
             var query = searchQuery
-                .Skip((filter.Page- 1) * filter.Limit)
+                .Skip((filter.Page - 1) * filter.Limit)
                 .Take(filter.Limit);
 
 

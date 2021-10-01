@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PetShop.Core.Filtering;
 using PetShop.Core.IServices;
 using PetShop.Core.Models;
 
@@ -47,11 +48,11 @@ namespace PetShop.WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<Insurance>> ReadAllInsurance()
+        public ActionResult<List<Insurance>> ReadAllInsurance([FromQuery] Filter filter)
         {
             try
             {
-                return Ok(_insuranceService.ReadAll());
+                return Ok(_insuranceService.ReadAll(filter));
             }
             catch (Exception e)
             {
